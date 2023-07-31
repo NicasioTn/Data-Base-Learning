@@ -1,0 +1,207 @@
+/*
+DROP TABLE STUDENT
+DROP TABLE SUBJECT
+DROP TABLE LECTURER
+DROP TABLE ENROLL
+
+*/
+
+CREATE TABLE STUDENT (
+	sid		char(5),
+	name	varchar(30),
+	major	varchar(30),
+	gpa		numeric(3,2),
+	birthday	date,
+CONSTRAINT std_pk PRIMARY KEY(sid),
+CONSTRAINT std_gpa CHECK(gpa BETWEEN 0.00 and 4.00)
+)
+CREATE TABLE SUBJECT (
+	sid		char(5),
+	name	varchar(30),
+	credit	int,
+	prerequisite	char(5),
+CONSTRAINT sub_pk PRIMARY KEY(sid),
+CONSTRAINT sub_fk_pre FOREIGN KEY(sid) REFERENCES Subject(sid)
+)
+CREATE TABLE LECTURER(
+	lid		char(5),
+	name	varchar(30),
+	salary	int,
+	major	varchar(30),
+CONSTRAINT lec_pk PRIMARY KEY(lid)
+)
+CREATE TABLE SECTION(
+	secid	int identity(1,1),
+	subid	char(5),
+	lecid	char(5),
+	term	char(6),
+CONSTRAINT sec_pk PRIMARY KEY(secid),
+CONSTRAINT sec_fk_sub FOREIGN KEY(subid) REFERENCES SUBJECT(sid),
+CONSTRAINT sec_fk_lec FOREIGN KEY(lecid) REFERENCES LECTURER(lid),
+CONSTRAINT sec_uk UNIQUE(subid,lecid,term)
+)
+CREATE TABLE ENROLL(
+	secid	int,
+	stdid	char(5),
+	grade	char,
+CONSTRAINT enroll_fk_sec FOREIGN KEY(secid) REFERENCES SECTION(secid),
+CONSTRAINT enroll_fk_std FOREIGN KEY(stdid) REFERENCES STUDENT(sid),
+CONSTRAINT enroll_pk PRIMARY KEY(secid,stdid),
+CONSTRAINT enroll_grade CHECK(grade IN ('A','B','C','D','F'))
+)
+
+set dateformat dmy
+
+INSERT INTO STUDENT VALUES('T0001','jim','CS','4.00','05-13-2000')
+INSERT INTO STUDENT VALUES('T0002','jack','CS','3.40','01-15-2000')
+INSERT INTO STUDENT VALUES('T0003','joe','CS','2.70','06-25-2001')
+INSERT INTO STUDENT VALUES('T0004','joy','CS',null,null)
+INSERT INTO STUDENT VALUES('T0005','jane ','PY','2.78','09-02-2002')
+INSERT INTO STUDENT VALUES('T0006','Peter','CS',null,null)
+
+select*from STUDENT
+
+--delete from STUDENT
+
+INSERT INTO SUBJECT VALUES('CS001', 'PROG1', '3', null)
+INSERT INTO SUBJECT VALUES('CS002', 'PROG2', '3','CS001')
+INSERT INTO SUBJECT VALUES('CS003', 'WEB', '2','CS001')
+INSERT INTO SUBJECT VALUES('CS004', 'DATA', '3','CS002')
+
+select*from SUBJECT 
+--delete from SUBJECT
+
+INSERT INTO LECTURER VALUES('t01', 'Peter Parker', 40000, 'CS')
+INSERT INTO LECTURER VALUES('t02', 'Steve Roger', 50000, 'CS')
+INSERT INTO LECTURER VALUES('t03', 'Mike Shinoda', 35000, 'MA')
+INSERT INTO LECTURER VALUES('t06', 'Peter Quinn', 40000, 'Architecture')
+
+select*from LECTURER
+--delete from LECTURER
+
+INSERT INTO SECTION VALUES('CS001', 't01', '1-2020')
+INSERT INTO SECTION VALUES('CS004', 't01', '1-2020')
+INSERT INTO SECTION VALUES('CS002', 't06', '2-2020')
+INSERT INTO SECTION VALUES('CS003', 't02', '1-2021')
+
+select*from SECTION 
+--delete from LECTURER
+
+INSERT INTO ENROLL VALUES('4','T0001', 'A')
+INSERT INTO ENROLL VALUES(4,'T0003', 'C')
+INSERT INTO ENROLL VALUES(4,'T0004',null)
+INSERT INTO ENROLL VALUES(6,'T0005','C')
+INSERT INTO ENROLL VALUES(6,'T0006','B')
+
+select*from ENROLL
+--delete from LECTURER
+
+--3.a
+Select *
+FROM SUBJECT
+
+--3.b
+Select name
+FROM SUBJECT
+WHERE sid = 'CS001'
+
+--3.c
+SELECT sid,name
+FROM STUDENT
+WHERE birthday is null
+
+--3.d
+SELECT sid
+FROM SUBJECT
+WHERE name = 'WEB'
+
+--3.e
+SELECT *
+FROM STUDENT
+WHERE major = 'CS'
+
+--3.f
+SELECT *
+FROM STUDENT
+WHERE major != 'CS'
+
+--3.g
+SELECT *
+FROM STUDENT
+WHERE gpa > 2.5
+
+--3.h
+SELECT * 
+FROM SECTION
+WHERE secid = 4
+
+--3.i
+SELECT stdid
+FROM ENROLL
+WHERE grade = 'A'
+
+--3.j
+SELECT lecid
+FROM SECTION
+WHERE subid = 'CS001'
+
+-- Update st
+--4.a
+UPDATE Student 
+SET name = 'jimmy'
+WHERE sid = 'T0005'
+
+SELECT * FROM STUDENT WHERE sid = 'T0005'
+
+--4.b
+UPDATE STUDENT
+SET gpa += 0.25
+WHERE sid = 'T0003'
+
+SELECT * FROM STUDENT WHERE sid = 'T0003'
+
+--4.c
+UPDATE LECTURER
+SET salary += 2000
+WHERE name = 'Peter Parker'
+
+SELECT * FROM LECTURER WHERE name = 'Peter Parker'
+
+--4.d 
+UPDATE LECTURER
+SET salary += salary * 0.1
+WHERE name = 'Steve Roger'
+
+SELECT * FROM LECTURER WHERE name = 'Steve Roger'
+
+--4.e
+UPDATE ENROLL
+SET grade = 'A'
+WHERE secid = 6
+
+SELECT * FROM ENROLL WHERE secid = 6
+
+-- Delete st
+--5a
+DELETE FROM SUBJECT
+WHERE sid = 'CS004'
+
+--5b.
+DElETE FROM ENROLL
+WHERE secid = 4
+
+SELECT * FROM ENROLL
+
+--5c.
+DELETE LECTURER
+WHERE lid = 't01'
+
+SELECT * FROM LECTURER
+
+--6. Drpp table
+/*
+DROP TABLE STUDENT
+DROP TABLE SUBJECT
+DROP TABLE LECTURER
+DROP TABLE ENROLL
+*/
